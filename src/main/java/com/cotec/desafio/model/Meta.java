@@ -1,8 +1,8 @@
 package com.cotec.desafio.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -12,11 +12,17 @@ public class Meta {
     @GeneratedValue
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "orgaoId")
+    @JsonBackReference
     @NotNull
     private Orgao orgao;
 
+    @OneToOne
+    @JoinColumn(columnDefinition = "metaId")
     private Meta meta;
 
+    @Column
     private String descricao;
 
     public Long getId() {

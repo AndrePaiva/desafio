@@ -1,9 +1,8 @@
 package com.cotec.desafio.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -13,8 +12,11 @@ public class Orgao {
     @GeneratedValue
     private Long id;
 
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Setor> setores;
 
+    @OneToMany(mappedBy = "orgao", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Meta> metas;
 
     @Column
