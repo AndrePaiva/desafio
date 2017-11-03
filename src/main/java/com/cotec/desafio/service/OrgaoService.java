@@ -11,4 +11,20 @@ public class OrgaoService implements BasicCrudService<Orgao> {
     @Autowired
     private OrgaoRepository orgaoRepository;
 
+    @Override
+    public Orgao save(Orgao orgao) {
+        return orgaoRepository.save(orgao);
+    }
+
+    @Override
+    public Orgao findById(Long id) {
+        return orgaoRepository.findOne(id);
+    }
+
+    @Override
+    public boolean remove(Long id) {
+        orgaoRepository.delete(id);
+        return true;
+    }
+
 }
