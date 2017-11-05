@@ -1,4 +1,4 @@
-package com.cotec.desafio.integration;
+package com.cotec.desafio.service.integration;
 
 
 import com.cotec.desafio.model.Goal;
@@ -26,15 +26,6 @@ public class GoalServiceTest {
     private Goal goal1;
     private Goal goal2;
     private HttpStatus responseStatus;
-
-    private void givenAnOrganization() {
-        organization1 = new Organization();
-        organization1.setDescription("Organization1");
-
-        ResponseEntity<Organization> responseEntity =
-                restTemplate.postForEntity("/organization", organization1, Organization.class);
-        organization1 = responseEntity.getBody();
-    }
 
     @Test
     public void itShouldCreateGoal(){
@@ -66,29 +57,13 @@ public class GoalServiceTest {
         thenShouldReturnError();
     }
 
-    private void whenTryToCreateCycleRelatedGoal() {
-        Goal goal3 = new Goal();
-        goal3.setDescription("GoalTest3");
-        goal3.setOrganization(organization1);
-        goal3.setGoal(goal2);
+    private void givenAnOrganization() {
+        organization1 = new Organization();
+        organization1.setDescription("Organization1");
 
-        ResponseEntity<Goal> responseEntity =
-                restTemplate.postForEntity("/goal", goal3, Goal.class);
-        goal3 = responseEntity.getBody();
-
-        goal1.setGoal(goal3);
-        ResponseEntity<Goal> responseCycleEntity =
-                restTemplate.postForEntity("/goal", goal1, Goal.class);
-        responseStatus = responseCycleEntity.getStatusCode();
-    }
-
-    private void thenShouldReturnError() {
-        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, responseStatus);
-    }
-
-    private void thenShouldCreateRelatedGoal() {
-        Assert.assertNotNull(goal2);
-        Assert.assertEquals(goal1.getOrganization(), goal2.getOrganization());
+        ResponseEntity<Organization> responseEntity =
+                restTemplate.postForEntity("/organization", organization1, Organization.class);
+        organization1 = responseEntity.getBody();
     }
 
     private void givenOtherOrganization() {
@@ -98,11 +73,6 @@ public class GoalServiceTest {
         ResponseEntity<Organization> responseEntity =
                 restTemplate.postForEntity("/organization", organization2, Organization.class);
         organization2 = responseEntity.getBody();
-    }
-
-    private void thenShouldCreateGoal() {
-        Assert.assertNotNull(goal1);
-        Assert.assertEquals(goal1.getOrganization(), organization1);
     }
 
     private void whenTryToCreateGoal() {
@@ -139,5 +109,35 @@ public class GoalServiceTest {
         ResponseEntity<Goal> responseEntity =
                 restTemplate.postForEntity("/goal", goal2, Goal.class);
         responseStatus = responseEntity.getStatusCode();
+    }
+
+    private void whenTryToCreateCycleRelatedGoal() {
+        Goal goal3 = new Goal();
+        goal3.setDescription("GoalTest3");
+        goal3.setOrganization(organization1);
+        goal3.setGoal(goal2);
+
+        ResponseEntity<Goal> responseEntity =
+                restTemplate.postForEntity("/goal", goal3, Goal.class);
+        goal3 = responseEntity.getBody();
+
+        goal1.setGoal(goal3);
+        ResponseEntity<Goal> responseCycleEntity =
+                restTemplate.postForEntity("/goal", goal1, Goal.class);
+        responseStatus = responseCycleEntity.getStatusCode();
+    }
+
+    private void thenShouldReturnError() {
+        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, responseStatus);
+    }
+
+    private void thenShouldCreateRelatedGoal() {
+        Assert.assertNotNull(goal2);
+        Assert.assertEquals(goal1.getOrganization(), goal2.getOrganization());
+    }
+
+    private void thenShouldCreateGoal() {
+        Assert.assertNotNull(goal1);
+        Assert.assertEquals(goal1.getOrganization(), organization1);
     }
 }
