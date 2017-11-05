@@ -25,7 +25,7 @@ public class GoalServiceTest {
     private Organization organization2;
     private Goal goal1;
     private Goal goal2;
-    private HttpStatus response;
+    private HttpStatus responseStatus;
 
     private void givenAnOrganization() {
         organization1 = new Organization();
@@ -54,12 +54,36 @@ public class GoalServiceTest {
     public void itShouldNotCreateRelateInvalidGoals(){
         givenAnOrganization();
         givenOtherOrganization();
-        whenTryToCreateRelatedGoal(organization2);
+        whenTryToCreateWrongRelatedGoal(organization2);
         thenShouldReturnError();
     }
 
+    @Test
+    public void itShouldNotCreateCycleRelatedGoals(){
+        givenAnOrganization();
+        whenTryToCreateRelatedGoal(organization1);
+        whenTryToCreateCycleRelatedGoal();
+        thenShouldReturnError();
+    }
+
+    private void whenTryToCreateCycleRelatedGoal() {
+        Goal goal3 = new Goal();
+        goal3.setDescription("GoalTest3");
+        goal3.setOrganization(organization1);
+        goal3.setGoal(goal2);
+
+        ResponseEntity<Goal> responseEntity =
+                restTemplate.postForEntity("/goal", goal3, Goal.class);
+        goal3 = responseEntity.getBody();
+
+        goal1.setGoal(goal3);
+        ResponseEntity<Goal> responseCycleEntity =
+                restTemplate.postForEntity("/goal", goal1, Goal.class);
+        responseStatus = responseCycleEntity.getStatusCode();
+    }
+
     private void thenShouldReturnError() {
-        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response);
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseStatus);
     }
 
     private void thenShouldCreateRelatedGoal() {
@@ -83,7 +107,7 @@ public class GoalServiceTest {
 
     private void whenTryToCreateGoal() {
         goal1 = new Goal();
-        goal1.setDescription("GoalTest");
+        goal1.setDescription("GoalTest1");
         goal1.setOrganization(organization1);
 
         ResponseEntity<Goal> responseEntity =
@@ -101,6 +125,19 @@ public class GoalServiceTest {
 
         ResponseEntity<Goal> responseEntity =
                 restTemplate.postForEntity("/goal", goal2, Goal.class);
-        response = responseEntity.getStatusCode();
+        goal2 = responseEntity.getBody();
+    }
+
+    private void whenTryToCreateWrongRelatedGoal(Organization organization) {
+        whenTryToCreateGoal();
+
+        goal2 = new Goal();
+        goal2.setDescription("GoalTest2");
+        goal2.setOrganization(organization);
+        goal2.setGoal(goal1);
+
+        ResponseEntity<Goal> responseEntity =
+                restTemplate.postForEntity("/goal", goal2, Goal.class);
+        responseStatus = responseEntity.getStatusCode();
     }
 }
