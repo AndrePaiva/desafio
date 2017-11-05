@@ -1,4 +1,5 @@
-*** Requisitos da aplicação ***
+[![Build Status](https://travis-ci.org/AndrePaiva/desafio.svg?branch=master)](https://travis-ci.org/AndrePaiva/desafio)
+#*** Requisitos da aplicação ***
 Deve-se fazer um CRUD simples de cadastro de Metas.
 Uma listagem de órgãos deve vir previamente cadastrada. Segue abaixo:
  -- SECRETARIA DE FINANÇAS
