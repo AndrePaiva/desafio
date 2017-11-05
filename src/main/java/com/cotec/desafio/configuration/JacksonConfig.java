@@ -1,4 +1,4 @@
-package com.cotec.desafio.service.configuration;
+package com.cotec.desafio.configuration;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;

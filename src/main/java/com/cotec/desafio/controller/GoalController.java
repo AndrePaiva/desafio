@@ -12,20 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/goal")
-public class GoalController extends BasicRestController<Goal> {
+@RequestMapping("/goal")
+public class GoalController extends BasicRestController<Goal, GoalService> {
 
     @Autowired
-    private GoalService goalService;
-
-    @Override
-    protected BasicCrudService getService() {
-        return goalService;
+    public GoalController(GoalService service) {
+        super(service);
     }
 
     @GetMapping
-    @RequestMapping(value = "/allByOrganizationId/{id}")
+    @RequestMapping("/allByOrganizationId/{id}")
     public List<Goal> findAllByOrganizationId(@PathVariable Long id) {
-        return goalService.findAllByOrganizationId(id);
+        return service.findAllByOrganizationId(id);
     }
 }

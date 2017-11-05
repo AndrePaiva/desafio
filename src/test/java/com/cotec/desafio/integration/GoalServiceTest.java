@@ -83,7 +83,7 @@ public class GoalServiceTest {
     }
 
     private void thenShouldReturnError() {
-        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseStatus);
+        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, responseStatus);
     }
 
     private void thenShouldCreateRelatedGoal() {

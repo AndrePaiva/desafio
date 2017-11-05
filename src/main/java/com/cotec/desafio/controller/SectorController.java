@@ -10,19 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/sector")
-public class SectorController extends BasicRestController<Sector> {
+@RequestMapping("/sector")
+public class SectorController extends BasicRestController<Sector, SectorService> {
 
     @Autowired
-    private SectorService sectorService;
-
-    @Override
-    BasicCrudService getService() {
-        return sectorService;
+    public SectorController(SectorService service) {
+        super(service);
     }
 
-    @GetMapping("/ByDescription/{description}")
+    @GetMapping("/description/{description}")
     public Sector findByDescription(@PathVariable String description) {
-        return sectorService.findByDescription(description);
+        return service.findByDescription(description);
     }
 }

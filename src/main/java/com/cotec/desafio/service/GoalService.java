@@ -15,16 +15,18 @@ import java.util.Set;
 import static java.lang.String.format;
 
 @Service
-public class GoalService implements BasicCrudService<Goal> {
+public class GoalService extends BasicCrudService<Goal, GoalRepository> {
 
     @Autowired
-    private GoalRepository goalRepository;
+    protected GoalService(GoalRepository repository) {
+        super(repository);
+    }
 
     @Override
-    public Goal save(Goal goal) throws InvalidEntityException {
-        validateOrganization(goal);
-        validateGoalRelation(goal);
-        return goalRepository.save(goal);
+    public Goal save(Goal entity) {
+        validateOrganization(entity);
+        validateGoalRelation(entity);
+        return super.save(entity);
     }
 
     private void validateOrganization(Goal goal) throws InvalidEntityException {
@@ -32,8 +34,16 @@ public class GoalService implements BasicCrudService<Goal> {
         if (org == null) {
             throw new InvalidEntityException("Organization not informed.");
         }
-        if (goal.getGoal() != null && !org.equals(goal.getGoal().getOrganization())) {
-            throw new InvalidEntityException("Organization must be the same for all related goals.");
+        Goal relatedGoal = goal.getGoal();
+
+        if (relatedGoal != null) {
+            relatedGoal = repository.findOne(relatedGoal.getId());
+            if (relatedGoal == null) {
+                throw new InvalidEntityException(format("Related Goal not found for id: %s.", goal.getGoal().getId()));
+            }
+            if (!org.equals(relatedGoal.getOrganization())) {
+                throw new InvalidEntityException("Organization must be the same for all related goals.");
+            }
         }
     }
 
@@ -43,6 +53,7 @@ public class GoalService implements BasicCrudService<Goal> {
         Goal relatedGoal = goal.getGoal();
 
         while (relatedGoal != null) {
+            relatedGoal = repository.findOne(relatedGoal.getId());
             if (visited.contains(relatedGoal)) {
                 throw new InvalidEntityException(format("Cycle found for goal with id: %s.", relatedGoal.getId()));
             }
@@ -51,34 +62,8 @@ public class GoalService implements BasicCrudService<Goal> {
         }
     }
 
-    @Override
-    public Goal findById(Long id) {
-        return goalRepository.findOne(id);
-    }
-
-    @Override
-    public List<Goal> find(Pageable pageable) {
-        return goalRepository.findAll(pageable).getContent();
-    }
-
-    @Override
-    public List<Goal> find() {
-        return (List<Goal>) goalRepository.findAll();
-    }
-
     public List<Goal> findAllByOrganizationId(Long id) {
-        return goalRepository.findAllByOrganizationId(id);
+        return repository.findAllByOrganizationId(id);
     }
 
-    @Override
-    public boolean remove(Long id) {
-        goalRepository.delete(id);
-        return true;
-    }
-
-    @Override
-    public boolean removeBatch(List<Goal> goals) {
-        goalRepository.delete(goals);
-        return true;
-    }
 }

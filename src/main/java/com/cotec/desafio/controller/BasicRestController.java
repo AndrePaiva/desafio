@@ -8,48 +8,46 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-public abstract class BasicRestController<T extends BasicEntity> {
+public abstract class BasicRestController<T extends BasicEntity, S extends BasicCrudService<T, ?>> {
 
-    abstract BasicCrudService getService();
+    protected S service;
+
+    protected BasicRestController(S service) {
+        this.service = service;
+    }
 
     @PostMapping
-    @ResponseBody
     public T create(@RequestBody T entity) throws InvalidEntityException {
-        return (T) getService().save(entity);
+        return service.save(entity);
     }
 
     @PutMapping
-    @ResponseBody
     public T update(@RequestBody T entity) throws InvalidEntityException {
-        return (T) getService().save(entity);
+        return service.save(entity);
     }
 
     @GetMapping("/{id}")
-    @ResponseBody
     public T findById(@PathVariable Long id) {
-        return (T) getService().findById(id);
+        return service.findById(id);
     }
 
     @GetMapping
-    @ResponseBody
     public List<T> find(@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer limit) {
-        if (offset != null && limit != null){
-            return (List<T>) getService().find(new PageRequest(offset, limit));
+        if (offset != null && limit != null) {
+            return service.find(new PageRequest(offset, limit));
         } else {
-            return getService().find();
+            return service.find();
         }
     }
 
     @DeleteMapping("/{id}")
-    @ResponseBody
     public boolean remove(@PathVariable Long id) {
-        return getService().remove(id);
+        return service.remove(id);
     }
 
-    @PostMapping("/batchDelete")
-    @ResponseBody
+    @PostMapping("/delete/batch")
     public boolean removeBatch(@RequestBody List<T> list) {
-        return getService().removeBatch(list);
+        return service.removeBatch(list);
     }
 
 }

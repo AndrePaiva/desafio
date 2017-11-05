@@ -1,6 +1,10 @@
 package com.cotec.desafio.exception;
 
-public class InvalidEntityException extends Exception{
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+public class InvalidEntityException extends RuntimeException {
 
     public InvalidEntityException() {
     }
@@ -8,4 +12,5 @@ public class InvalidEntityException extends Exception{
     public InvalidEntityException(String message) {
         super(message);
     }
+
 }

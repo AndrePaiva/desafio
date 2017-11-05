@@ -8,14 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/organization")
-public class OrganizationController extends BasicRestController<Organization> {
+@RequestMapping("/organization")
+public class OrganizationController extends BasicRestController<Organization, OrganizationService> {
 
     @Autowired
-    private OrganizationService organizationService;
-
-    @Override
-    BasicCrudService getService() {
-        return organizationService;
+    public OrganizationController(OrganizationService service) {
+        super(service);
     }
+
 }

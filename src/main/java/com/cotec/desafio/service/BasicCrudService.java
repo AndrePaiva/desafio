@@ -1,23 +1,47 @@
 package com.cotec.desafio.service;
 
-import com.cotec.desafio.exception.InvalidEntityException;
 import com.cotec.desafio.model.BasicEntity;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
-public interface BasicCrudService<T extends BasicEntity> {
+public abstract class BasicCrudService<T extends BasicEntity, R extends PagingAndSortingRepository<T, Long>> {
 
-    T save(T entity) throws InvalidEntityException;
+    protected R repository;
 
-    T findById(Long id);
+    protected BasicCrudService(R repository) {
+        this.repository = repository;
+    }
 
-    List<T> find(Pageable pageable);
+    public T save(T entity) {
+        return repository.save(entity);
+    }
 
-    List<T> find();
+    public T findById(Long id) {
+        return repository.findOne(id);
+    }
 
-    boolean remove(Long id);
+    public T findById(T entity) {
+        return findById(entity.getId());
+    }
 
-    boolean removeBatch(List<T> list);
+    public List<T> find(Pageable pageable) {
+        return repository.findAll(pageable).getContent();
+    }
+
+    public List<T> find() {
+        return (List<T>) repository.findAll();
+    }
+
+    public boolean remove(Long id) {
+        repository.delete(id);
+        return true;
+    }
+
+    public boolean removeBatch(List<T> entities) {
+        repository.delete(entities);
+        return true;
+    }
 
 }
