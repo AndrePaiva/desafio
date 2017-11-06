@@ -27,6 +27,10 @@ public class GoalServiceTest {
     private Goal goal2;
     private HttpStatus responseStatus;
 
+    /**
+     * O cenário deste teste é a criação de uma Meta.
+     * Ao tenatr criar, ela deve ser retornada.
+     */
     @Test
     public void itShouldCreateGoal(){
         givenAnOrganization();
@@ -34,6 +38,10 @@ public class GoalServiceTest {
         thenShouldCreateGoal();
     }
 
+    /**
+     * No cenário deste teste duas metas são criadas. A segunda regra é criada se relacionando com a primaiera
+     * regra criada, sendo ambas do mesmo Órgão.
+     */
     @Test
     public void itShouldCreateRelatedGoal(){
         givenAnOrganization();
@@ -41,6 +49,10 @@ public class GoalServiceTest {
         thenShouldCreateRelatedGoal();
     }
 
+    /**
+     * O cenário deste teste é a tentativa de criar regras relacionadas de Órgãos distintos. Seguindo a regra de negócio,
+     * isso não deve ser possível, então a validação impede a criação dessa relação.
+     */
     @Test
     public void itShouldNotCreateRelateInvalidGoals(){
         givenAnOrganization();
@@ -49,6 +61,11 @@ public class GoalServiceTest {
         thenShouldReturnError();
     }
 
+    /**
+     * O cenário deste teste é a criação de três metas relacionadas de um mesmo Órgão. No entanto isso é feito tentando
+     * forçar uma relação cíclica, o que poderia acarretar em um erro de serialização. Esse cenário testa a validação de
+     * relação cíclica entre Metas.
+     */
     @Test
     public void itShouldNotCreateCycleRelatedGoals(){
         givenAnOrganization();

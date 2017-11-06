@@ -48,6 +48,10 @@ public class GoalServiceTest {
         organization2.setId(10001l);
     }
 
+    /**
+     * O cenário deste teste é a criação de uma Meta.
+     * Ao tenatr criar, ela deve ser retornada.
+     */
     @Test
     public void itShouldSaveGoal(){
         givenGoal1();
@@ -55,6 +59,10 @@ public class GoalServiceTest {
         thenShouldSave();
     }
 
+    /**
+     * No cenário deste teste duas metas são criadas. A segunda regra é criada se relacionando com a primaiera
+     * regra criada, sendo ambas do mesmo Órgão.
+     */
     @Test
     public void itShouldSaveRelatedGoals(){
         givenGoal1();
@@ -63,6 +71,10 @@ public class GoalServiceTest {
         thenShouldSave();
     }
 
+    /**
+     * O cenário deste teste é a tentativa de criar regras relacionadas de Órgãos distintos. Seguindo a regra de negócio,
+     * isso não deve ser possível, então a validação impede a criação dessa relação.
+     */
     @Test(expected = InvalidEntityException.class)
     public void itShouldNotSaveRelatedGoals(){
         givenGoal1();
@@ -70,6 +82,11 @@ public class GoalServiceTest {
         whenTryToRelateWrongGoals();
     }
 
+    /**
+     * O cenário deste teste é a criação de três metas relacionadas de um mesmo Órgão. No entanto isso é feito tentando
+     * forçar uma relação cíclica, o que poderia acarretar em um erro de serialização. Esse cenário testa a validação de
+     * relação cíclica entre Metas.
+     */
     @Test(expected = InvalidEntityException.class)
     public void itShouldNotSaveCycleRelatedGoals(){
         givenGoal1();
